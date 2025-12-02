@@ -14,6 +14,8 @@ const Layout = ({ children }) => {
   const [floatingMenuOpen, setFloatingMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
   const floatingMenuRef = useRef(null);
+  const floatingMenuButtonRef = useRef(null);
+  const floatingMenuContainerRef = useRef(null);
 
   const handleLogout = async () => {
     await logout();
@@ -104,20 +106,38 @@ const Layout = ({ children }) => {
   // Close floating menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (floatingMenuRef.current && !floatingMenuRef.current.contains(event.target)) {
-        setFloatingMenuOpen(false);
+      // Check if click is inside the container (button + menu)
+      const isInsideContainer = floatingMenuContainerRef.current && floatingMenuContainerRef.current.contains(event.target);
+      // Check if click is inside the menu dropdown
+      const isInsideMenu = floatingMenuRef.current && floatingMenuRef.current.contains(event.target);
+      // Check if click is on the button
+      const isOnButton = floatingMenuButtonRef.current && floatingMenuButtonRef.current.contains(event.target);
+
+      // Check if click is on a Link element (for mobile menu)
+      const isLink = event.target.closest('a');
+
+      // Don't close if clicking inside container, menu, button, or on a link
+      if (isInsideContainer || isInsideMenu || isOnButton || isLink) {
+        return;
       }
+
+      // Close if clicking outside
+      setFloatingMenuOpen(false);
     };
 
     if (floatingMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
-    }
+      // Use a longer delay to ensure Link onClick fires first
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('click', handleClickOutside, true);
+        document.addEventListener('touchstart', handleClickOutside, true);
+      }, 100);
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
-    };
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('click', handleClickOutside, true);
+        document.removeEventListener('touchstart', handleClickOutside, true);
+      };
+    }
   }, [floatingMenuOpen]);
 
   const isActive = (path) => location.pathname === path;
@@ -162,38 +182,25 @@ const Layout = ({ children }) => {
                       )}
                     </Link>
                     <Link
-                      to="/games"
-                      className={`relative px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 ${isActive('/games')
+                      to="/videos"
+                      className={`relative px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 ${isActive('/videos')
                         ? 'text-white'
                         : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
                         }`}
-                      style={isActive('/games') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
+                      style={isActive('/videos') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
                     >
-                      <FaGamepad className="text-xs" />
-                      <span>الألعاب</span>
-                      {isActive('/games') && (
-                        <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></span>
-                      )}
-                    </Link>
-                    <Link
-                      to="/contact"
-                      className={`relative px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 ${isActive('/contact')
-                        ? 'text-white'
-                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
-                        }`}
-                      style={isActive('/contact') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
-                    >
-                      <FaEnvelope className="text-xs" />
-                      <span>التواصل</span>
-                      {isActive('/contact') && (
+                      <FaVideo className="text-xs" />
+                      <span>الفيديوهات</span>
+                      {isActive('/videos') && (
                         <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></span>
                       )}
                     </Link>
                   </div>
 
                   {/* More Menu (Floating Actions) - Desktop */}
-                  <div className="relative" ref={floatingMenuRef}>
+                  <div className="relative" ref={floatingMenuContainerRef}>
                     <button
+                      ref={floatingMenuButtonRef}
                       onClick={(e) => {
                         e.stopPropagation();
                         setFloatingMenuOpen(!floatingMenuOpen);
@@ -212,6 +219,7 @@ const Layout = ({ children }) => {
                     {/* Dropdown Menu */}
                     {floatingMenuOpen && (
                       <div
+                        ref={floatingMenuRef}
                         className="absolute right-0 top-16 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50"
                       >
                         {/* Profile */}
@@ -229,17 +237,43 @@ const Layout = ({ children }) => {
                           <span className="text-sm">حسابي</span>
                         </Link>
 
-                        {/* Videos */}
+                        {/* Games */}
                         <Link
-                          to="/videos"
+                          to="/games"
                           onClick={() => setFloatingMenuOpen(false)}
                           className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
                         >
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-white">
-                            <FaVideo className="text-sm" />
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white">
+                            <FaGamepad className="text-sm" />
                           </div>
-                          <span className="text-sm">الفيديوهات</span>
+                          <span className="text-sm">الألعاب</span>
                         </Link>
+
+                        {/* Contact */}
+                        <Link
+                          to="/contact"
+                          onClick={() => setFloatingMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white">
+                            <FaEnvelope className="text-sm" />
+                          </div>
+                          <span className="text-sm">التواصل</span>
+                        </Link>
+
+                        {/* Admin - Only for admins */}
+                        {isAdmin && (
+                          <Link
+                            to="/admin"
+                            onClick={() => setFloatingMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white">
+                              <FaCog className="text-sm" />
+                            </div>
+                            <span className="text-sm">الإدارة</span>
+                          </Link>
+                        )}
 
                         {/* Daily Message */}
                         <Link
@@ -421,42 +455,19 @@ const Layout = ({ children }) => {
               <span className="text-xs font-medium">الصور</span>
             </Link>
             <Link
-              to="/games"
-              className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${isActive('/games')
+              to="/videos"
+              className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${isActive('/videos')
                 ? 'text-white'
                 : 'text-gray-600'
                 }`}
-              style={isActive('/games') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
+              style={isActive('/videos') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
             >
-              <FaGamepad className={`text-xl mb-1 ${isActive('/games') ? '' : 'text-gray-500'}`} />
-              <span className="text-xs font-medium">الألعاب</span>
+              <FaVideo className={`text-xl mb-1 ${isActive('/videos') ? '' : 'text-gray-500'}`} />
+              <span className="text-xs font-medium">الفيديوهات</span>
             </Link>
-            <Link
-              to="/contact"
-              className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${isActive('/contact')
-                ? 'text-white'
-                : 'text-gray-600'
-                }`}
-              style={isActive('/contact') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
-            >
-              <FaEnvelope className={`text-xl mb-1 ${isActive('/contact') ? '' : 'text-gray-500'}`} />
-              <span className="text-xs font-medium">التواصل</span>
-            </Link>
-            {isAdmin && (
-              <Link
-                to="/admin"
-                className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${location.pathname.startsWith('/admin')
-                  ? 'text-white'
-                  : 'text-gray-600'
-                  }`}
-                style={location.pathname.startsWith('/admin') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
-              >
-                <FaCog className={`text-xl mb-1 ${location.pathname.startsWith('/admin') ? '' : 'text-gray-500'}`} />
-                <span className="text-xs font-medium">الإدارة</span>
-              </Link>
-            )}
             {/* More Menu Button */}
             <button
+              ref={floatingMenuButtonRef}
               onClick={(e) => {
                 e.stopPropagation();
                 setFloatingMenuOpen(!floatingMenuOpen);
@@ -496,7 +507,7 @@ const Layout = ({ children }) => {
           className={`relative bg-white rounded-t-3xl shadow-2xl transition-transform duration-300 ease-out ${floatingMenuOpen ? 'translate-y-0' : 'translate-y-full'
             }`}
           style={{
-            maxHeight: '75vh',
+            maxHeight: '80vh',
             boxShadow: '0 -10px 40px rgba(0, 0, 0, 0.2)',
             zIndex: 40
           }}
@@ -514,11 +525,14 @@ const Layout = ({ children }) => {
           </div>
 
           {/* Menu Items */}
-          <div className="px-4 pb-20 pt-2 space-y-2 max-h-[60vh] overflow-y-auto">
+          <div className="px-4 pb-20 pt-2 space-y-2 max-h-[90vh] overflow-y-auto">
             {/* Profile */}
             <Link
               to="/profile"
-              onClick={() => setFloatingMenuOpen(false)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setFloatingMenuOpen(false);
+              }}
               className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-all duration-200 active:scale-95"
               style={{ backgroundColor: isActive('/profile') ? `${settings?.colors?.primary || '#1F2937'}10` : '' }}
             >
@@ -535,27 +549,75 @@ const Layout = ({ children }) => {
               <FaChevronUp className="text-gray-400 transform rotate-90 flex-shrink-0" />
             </Link>
 
-            {/* Videos */}
+            {/* Games */}
             <Link
-              to="/videos"
-              onClick={() => setFloatingMenuOpen(false)}
-              className="flex items-center gap-4 p-4 rounded-2xl hover:bg-red-50 transition-all duration-200 active:scale-95"
-              style={{ backgroundColor: isActive('/videos') ? `${settings?.colors?.primary || '#1F2937'}10` : '' }}
+              to="/games"
+              onClick={(e) => {
+                e.stopPropagation();
+                setFloatingMenuOpen(false);
+              }}
+              className="flex items-center gap-4 p-4 rounded-2xl hover:bg-purple-50 transition-all duration-200 active:scale-95"
+              style={{ backgroundColor: isActive('/games') ? `${settings?.colors?.primary || '#1F2937'}10` : '' }}
             >
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-white flex-shrink-0">
-                <FaVideo className="text-xl" />
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white flex-shrink-0">
+                <FaGamepad className="text-xl" />
               </div>
               <div className="flex-1 text-right">
-                <div className="font-bold text-gray-900">الفيديوهات</div>
-                <div className="text-sm text-gray-500">مشاهدة الفيديوهات</div>
+                <div className="font-bold text-gray-900">الألعاب</div>
+                <div className="text-sm text-gray-500">الألعاب والأنشطة</div>
               </div>
               <FaChevronUp className="text-gray-400 transform rotate-90 flex-shrink-0" />
             </Link>
 
+            {/* Contact */}
+            <Link
+              to="/contact"
+              onClick={(e) => {
+                e.stopPropagation();
+                setFloatingMenuOpen(false);
+              }}
+              className="flex items-center gap-4 p-4 rounded-2xl hover:bg-blue-50 transition-all duration-200 active:scale-95"
+              style={{ backgroundColor: isActive('/contact') ? `${settings?.colors?.primary || '#1F2937'}10` : '' }}
+            >
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white flex-shrink-0">
+                <FaEnvelope className="text-xl" />
+              </div>
+              <div className="flex-1 text-right">
+                <div className="font-bold text-gray-900">التواصل</div>
+                <div className="text-sm text-gray-500">تواصل معنا</div>
+              </div>
+              <FaChevronUp className="text-gray-400 transform rotate-90 flex-shrink-0" />
+            </Link>
+
+            {/* Admin - Only for admins */}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setFloatingMenuOpen(false);
+                }}
+                className="flex items-center gap-4 p-4 rounded-2xl hover:bg-orange-50 transition-all duration-200 active:scale-95"
+                style={{ backgroundColor: location.pathname.startsWith('/admin') ? `${settings?.colors?.primary || '#1F2937'}10` : '' }}
+              >
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white flex-shrink-0">
+                  <FaCog className="text-xl" />
+                </div>
+                <div className="flex-1 text-right">
+                  <div className="font-bold text-gray-900">الإدارة</div>
+                  <div className="text-sm text-gray-500">لوحة التحكم</div>
+                </div>
+                <FaChevronUp className="text-gray-400 transform rotate-90 flex-shrink-0" />
+              </Link>
+            )}
+
             {/* Daily Message */}
             <Link
               to="/daily-message"
-              onClick={() => setFloatingMenuOpen(false)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setFloatingMenuOpen(false);
+              }}
               className="flex items-center gap-4 p-4 rounded-2xl hover:bg-green-50 transition-all duration-200 active:scale-95"
               style={{ backgroundColor: isActive('/daily-message') ? `${settings?.colors?.primary || '#1F2937'}10` : '' }}
             >
