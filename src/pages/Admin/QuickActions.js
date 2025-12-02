@@ -121,13 +121,13 @@ const AdminQuickActions = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold flex items-center gap-2">
-          <FaBolt className="text-blue-600" />
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 mb-6">
+        <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
+          <FaBolt className="text-blue-600 text-base md:text-2xl" />
           إدارة الإجراءات السريعة
         </h1>
-        <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-          <FaPlus />
+        <button onClick={handleCreate} className="w-full md:w-auto btn-primary text-sm md:text-base flex items-center justify-center gap-2 px-3 md:px-4">
+          <FaPlus className="text-sm" />
           إجراء جديد
         </button>
       </div>

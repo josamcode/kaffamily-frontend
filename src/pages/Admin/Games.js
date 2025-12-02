@@ -184,19 +184,21 @@ const AdminGames = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold flex items-center gap-2">
-          <FaGamepad className="text-blue-600" />
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 mb-6">
+        <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
+          <FaGamepad className="text-blue-600 text-base md:text-2xl" />
           إدارة الألعاب
         </h1>
-        <div className="flex gap-2">
-          <Link to="/games" className="btn-secondary flex items-center gap-2">
-            <FaExternalLinkAlt />
-            عرض الصفحة العامة
+        <div className="flex gap-2 w-full md:w-auto">
+          <Link to="/games" className="flex-1 md:flex-none btn-secondary text-sm md:text-base flex items-center justify-center gap-2 px-3 md:px-4">
+            <FaExternalLinkAlt className="text-sm" />
+            <span className="hidden sm:inline">عرض الصفحة</span>
+            <span className="sm:hidden">عرض</span>
           </Link>
-          <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-            <FaPlus />
-            لعبة جديدة
+          <button onClick={handleCreate} className="flex-1 md:flex-none btn-primary text-sm md:text-base flex items-center justify-center gap-2 px-3 md:px-4">
+            <FaPlus className="text-sm" />
+            <span className="hidden sm:inline">لعبة جديدة</span>
+            <span className="sm:hidden">جديد</span>
           </button>
         </div>
       </div>
@@ -334,7 +336,7 @@ const AdminGames = () => {
               {/* Number Hints List */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <label className="block text-sm font-medium flex items-center gap-2 text-gray-700">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                     <FaListOl />
                     الأرقام والتلميحات
                   </label>
@@ -503,7 +505,7 @@ const AdminGames = () => {
           {formData.type !== 'number_guess' && (
             <div className="border-t pt-4">
               <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-medium flex items-center gap-2">
+                <label className="flex items-center gap-2 text-sm font-medium">
                   <FaListOl />
                   خطوات اللعبة
                 </label>

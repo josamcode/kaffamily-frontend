@@ -143,23 +143,24 @@ const AdminStaff = () => {
   if (loading) return <Loading fullScreen />;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold flex items-center gap-2">
-          <FaUserTie className="text-blue-600" />
+    <div className="container mx-auto px-4 py-6 md:py-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 mb-4 md:mb-6">
+        <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
+          <FaUserTie className="text-blue-600 text-base md:text-2xl" />
           إدارة الفريق
         </h1>
-        <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-          <FaPlus />
-          إضافة عضو جديد
+        <button onClick={handleCreate} className="w-full md:w-auto btn-primary text-sm md:text-base flex items-center justify-center gap-2 px-3 md:px-4">
+          <FaPlus className="text-sm" />
+          <span className="hidden sm:inline">إضافة عضو جديد</span>
+          <span className="sm:hidden">إضافة عضو</span>
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {staff.length === 0 ? (
-          <div className="col-span-full text-center py-16">
-            <FaUsers className="text-6xl text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-600 text-xl">لا يوجد أعضاء فريق</p>
+          <div className="col-span-full text-center py-12 md:py-16">
+            <FaUsers className="text-4xl md:text-6xl text-gray-300 mx-auto mb-3 md:mb-4" />
+            <p className="text-gray-600 text-base md:text-xl">لا يوجد أعضاء فريق</p>
           </div>
         ) : (
           staff
@@ -169,10 +170,10 @@ const AdminStaff = () => {
               return (
                 <div
                   key={member._id}
-                  className={`bg-white rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl ${!member.isActive ? 'opacity-60' : ''}`}
+                  className={`bg-white rounded-lg md:rounded-xl shadow-md md:shadow-lg overflow-hidden transition-all hover:shadow-xl ${!member.isActive ? 'opacity-60' : ''}`}
                 >
                   {/* Image Section */}
-                  <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200">
+                  <div className="relative h-48 md:h-64 bg-gradient-to-br from-gray-100 to-gray-200">
                     {member.image ? (
                       <>
                         <img
@@ -180,9 +181,9 @@ const AdminStaff = () => {
                           alt={member.name}
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute top-2 right-2 flex gap-2">
-                          <label className="cursor-pointer p-2 bg-white/90 hover:bg-white rounded-full shadow-md transition-colors">
-                            <FaUpload className="text-gray-700 text-sm" />
+                        <div className="absolute top-2 right-2 flex gap-1.5 md:gap-2">
+                          <label className="cursor-pointer p-1.5 md:p-2 bg-white/90 hover:bg-white rounded-full shadow-md transition-colors">
+                            <FaUpload className="text-gray-700 text-xs md:text-sm" />
                             <input
                               type="file"
                               accept="image/*"
@@ -193,19 +194,19 @@ const AdminStaff = () => {
                           </label>
                           <button
                             onClick={() => handleRemoveImage(member._id)}
-                            className="p-2 bg-white/90 hover:bg-white rounded-full shadow-md transition-colors"
+                            className="p-1.5 md:p-2 bg-white/90 hover:bg-white rounded-full shadow-md transition-colors"
                             title="حذف الصورة"
                           >
-                            <FaTimes className="text-red-600 text-sm" />
+                            <FaTimes className="text-red-600 text-xs md:text-sm" />
                           </button>
                         </div>
                       </>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <div className="text-center">
-                          <FaUserTie className="text-6xl text-gray-400 mx-auto mb-2" />
-                          <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 rounded-lg shadow-sm transition-colors text-sm text-gray-700">
-                            <FaUpload />
+                          <FaUserTie className="text-4xl md:text-6xl text-gray-400 mx-auto mb-2" />
+                          <label className="cursor-pointer inline-flex items-center gap-2 px-3 md:px-4 py-2 bg-white hover:bg-gray-50 rounded-lg shadow-sm transition-colors text-xs md:text-sm text-gray-700">
+                            <FaUpload className="text-xs" />
                             رفع صورة
                             <input
                               type="file"
@@ -221,46 +222,46 @@ const AdminStaff = () => {
                   </div>
 
                   {/* Content Section */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-1 text-gray-800">{member.name}</h3>
-                    <p className="text-gray-600 mb-4 text-sm">{member.role}</p>
+                  <div className="p-3 md:p-6">
+                    <h3 className="text-base md:text-xl font-bold mb-1 text-gray-800">{member.name}</h3>
+                    <p className="text-gray-600 mb-3 md:mb-4 text-xs md:text-sm">{member.role}</p>
 
-                    <div className="space-y-3 mb-6">
+                    <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
                       <a
                         href={`tel:${member.contactNumber}`}
-                        className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-colors"
+                        className="flex items-center gap-2 md:gap-3 text-gray-700 hover:text-blue-600 transition-colors"
                       >
-                        <div className="flex items-center justify-center w-10 h-10 bg-blue-50 rounded-full">
-                          <FaPhone className="text-blue-600" />
+                        <div className="flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-blue-50 rounded-full flex-shrink-0">
+                          <FaPhone className="text-blue-600 text-xs md:text-base" />
                         </div>
-                        <span className="font-medium">{member.contactNumber}</span>
+                        <span className="font-medium text-xs md:text-base">{member.contactNumber}</span>
                       </a>
                       {member.email && (
                         <a
                           href={`mailto:${member.email}`}
-                          className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-colors"
+                          className="flex items-center gap-2 md:gap-3 text-gray-700 hover:text-blue-600 transition-colors"
                         >
-                          <div className="flex items-center justify-center w-10 h-10 bg-blue-50 rounded-full">
-                            <FaEnvelope className="text-blue-600" />
+                          <div className="flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-blue-50 rounded-full flex-shrink-0">
+                            <FaEnvelope className="text-blue-600 text-xs md:text-base" />
                           </div>
-                          <span className="font-medium text-sm">{member.email}</span>
+                          <span className="font-medium text-xs md:text-sm truncate">{member.email}</span>
                         </a>
                       )}
                     </div>
 
-                    <div className="flex gap-2 pt-4 border-t border-gray-200">
+                    <div className="flex gap-2 pt-3 md:pt-4 border-t border-gray-200">
                       <button
                         onClick={() => handleEdit(member)}
-                        className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 px-3 md:px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs md:text-sm font-medium transition-colors flex items-center justify-center gap-1 md:gap-2"
                       >
-                        <FaEdit />
+                        <FaEdit className="text-xs" />
                         تعديل
                       </button>
                       <button
                         onClick={() => handleDelete(member._id)}
-                        className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 px-3 md:px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs md:text-sm font-medium transition-colors flex items-center justify-center gap-1 md:gap-2"
                       >
-                        <FaTrash />
+                        <FaTrash className="text-xs" />
                         حذف
                       </button>
                     </div>

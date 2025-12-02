@@ -51,46 +51,46 @@ const AdminAnalytics = () => {
   if (loading) return <Loading fullScreen />;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 flex items-center gap-2">
-        <FaChartBar className="text-blue-600" />
+    <div className="container mx-auto px-4 py-6 md:py-8">
+      <h1 className="text-xl md:text-3xl font-bold mb-6 md:mb-8 flex items-center gap-2">
+        <FaChartBar className="text-blue-600 text-base md:text-2xl" />
         التحليلات والإحصائيات
       </h1>
 
       {/* Date Filter */}
-      <div className="card mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <FaFilter className="text-gray-600" />
-          <h2 className="text-xl font-semibold">فلترة البيانات</h2>
+      <div className="card mb-4 md:mb-6 p-4 md:p-6">
+        <div className="flex items-center gap-2 mb-3 md:mb-4">
+          <FaFilter className="text-gray-600 text-sm md:text-base" />
+          <h2 className="text-base md:text-xl font-semibold">فلترة البيانات</h2>
         </div>
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-4">
           <div className="flex-1">
-            <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-              <FaCalendarAlt />
+            <label className="flex items-center gap-2 text-xs md:text-sm font-medium mb-2">
+              <FaCalendarAlt className="text-xs" />
               من تاريخ
             </label>
             <input
               type="date"
-              className="input-field"
+              className="input-field text-sm"
               value={dateRange.startDate}
               onChange={(e) => setDateRange({ ...dateRange, startDate: e.target.value })}
             />
           </div>
           <div className="flex-1">
-            <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-              <FaCalendarAlt />
+            <label className="flex items-center gap-2 text-xs md:text-sm font-medium mb-2">
+              <FaCalendarAlt className="text-xs" />
               إلى تاريخ
             </label>
             <input
               type="date"
-              className="input-field"
+              className="input-field text-sm"
               value={dateRange.endDate}
               onChange={(e) => setDateRange({ ...dateRange, endDate: e.target.value })}
             />
           </div>
-          <div className="flex items-end">
-            <button onClick={handleDateFilter} className="btn-primary flex items-center gap-2">
-              <FaFilter />
+          <div className="flex items-end w-full md:w-auto">
+            <button onClick={handleDateFilter} className="btn-primary text-sm md:text-base w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2">
+              <FaFilter className="text-xs" />
               تطبيق الفلتر
             </button>
           </div>
@@ -98,62 +98,62 @@ const AdminAnalytics = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="card bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-500">
-          <div className="flex items-center justify-between">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
+        <div className="card p-3 md:p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-500">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
             <div>
-              <h3 className="text-sm text-gray-600 mb-2">زيارات اليوم</h3>
-              <p className="text-4xl font-bold text-blue-600">{stats.todayVisits || 0}</p>
+              <h3 className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">زيارات اليوم</h3>
+              <p className="text-2xl md:text-4xl font-bold text-blue-600">{stats.todayVisits || 0}</p>
             </div>
-            <FaEye className="text-4xl text-blue-400 opacity-50" />
+            <FaEye className="hidden md:block text-4xl text-blue-400 opacity-50" />
           </div>
         </div>
-        <div className="card bg-gradient-to-br from-purple-50 to-purple-100 border-l-4 border-purple-500">
-          <div className="flex items-center justify-between">
+        <div className="card p-3 md:p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-l-4 border-purple-500">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
             <div>
-              <h3 className="text-sm text-gray-600 mb-2">زيارات هذا الأسبوع</h3>
-              <p className="text-4xl font-bold text-purple-600">{stats.thisWeekVisits || 0}</p>
+              <h3 className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">هذا الأسبوع</h3>
+              <p className="text-2xl md:text-4xl font-bold text-purple-600">{stats.thisWeekVisits || 0}</p>
             </div>
-            <FaChartLine className="text-4xl text-purple-400 opacity-50" />
+            <FaChartLine className="hidden md:block text-4xl text-purple-400 opacity-50" />
           </div>
         </div>
-        <div className="card bg-gradient-to-br from-green-50 to-green-100 border-l-4 border-green-500">
-          <div className="flex items-center justify-between">
+        <div className="card p-3 md:p-6 bg-gradient-to-br from-green-50 to-green-100 border-l-4 border-green-500">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
             <div>
-              <h3 className="text-sm text-gray-600 mb-2">زيارات هذا الشهر</h3>
-              <p className="text-4xl font-bold text-green-600">{stats.thisMonthVisits || 0}</p>
+              <h3 className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">هذا الشهر</h3>
+              <p className="text-2xl md:text-4xl font-bold text-green-600">{stats.thisMonthVisits || 0}</p>
             </div>
-            <FaChartBar className="text-4xl text-green-400 opacity-50" />
+            <FaChartBar className="hidden md:block text-4xl text-green-400 opacity-50" />
           </div>
         </div>
-        <div className="card bg-gradient-to-br from-orange-50 to-orange-100 border-l-4 border-orange-500">
-          <div className="flex items-center justify-between">
+        <div className="card p-3 md:p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-l-4 border-orange-500">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
             <div>
-              <h3 className="text-sm text-gray-600 mb-2">إجمالي الزيارات</h3>
-              <p className="text-4xl font-bold text-orange-600">{stats.totalVisits || 0}</p>
+              <h3 className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">الإجمالي</h3>
+              <p className="text-2xl md:text-4xl font-bold text-orange-600">{stats.totalVisits || 0}</p>
             </div>
-            <FaGlobe className="text-4xl text-orange-400 opacity-50" />
+            <FaGlobe className="hidden md:block text-4xl text-orange-400 opacity-50" />
           </div>
         </div>
       </div>
 
       {/* Page Visits Breakdown */}
       {pageVisits.length > 0 && (
-        <div className="card mb-6">
-          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-            <FaChartBar className="text-blue-600" />
+        <div className="card p-4 md:p-6 mb-4 md:mb-6">
+          <h2 className="text-base md:text-2xl font-bold mb-3 md:mb-4 flex items-center gap-2">
+            <FaChartBar className="text-blue-600 text-sm md:text-xl" />
             زيارات الصفحات
           </h2>
           <div className="space-y-2">
             {pageVisits.map((page, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <span className="font-medium flex items-center gap-2">
-                  <FaGlobe className="text-gray-400" />
-                  {page._id || 'غير محدد'}
+              <div key={index} className="flex items-center justify-between p-3 md:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <span className="font-medium text-xs md:text-base flex items-center gap-2 truncate">
+                  <FaGlobe className="text-gray-400 text-xs md:text-base flex-shrink-0" />
+                  <span className="truncate">{page._id || 'غير محدد'}</span>
                 </span>
-                <span className="text-blue-600 font-bold flex items-center gap-2">
-                  <FaEye />
-                  {page.count} زيارة
+                <span className="text-blue-600 font-bold text-xs md:text-base flex items-center gap-1 md:gap-2 flex-shrink-0">
+                  <FaEye className="text-xs" />
+                  {page.count}
                 </span>
               </div>
             ))}
@@ -162,12 +162,14 @@ const AdminAnalytics = () => {
       )}
 
       {/* Recent Activity */}
-      <div className="card">
-        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-          <FaChartLine className="text-blue-600" />
+      <div className="card p-4 md:p-6">
+        <h2 className="text-base md:text-2xl font-bold mb-3 md:mb-4 flex items-center gap-2">
+          <FaChartLine className="text-blue-600 text-sm md:text-xl" />
           النشاط الأخير
         </h2>
-        <div className="overflow-x-auto">
+
+        {/* Desktop: Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b">
@@ -207,6 +209,41 @@ const AdminAnalytics = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile: Cards */}
+        <div className="md:hidden space-y-3">
+          {analytics.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <FaChartBar className="text-3xl mx-auto mb-2 text-gray-300" />
+              <p className="text-sm">لا يوجد نشاط</p>
+            </div>
+          ) : (
+            analytics.slice(0, 50).map((item) => (
+              <div key={item._id} className="bg-gray-50 rounded-lg p-3 space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">
+                    {item.visitType === 'page_entry' && 'دخول صفحة'}
+                    {item.visitType === 'collection_download' && 'تحميل'}
+                    {item.visitType === 'image_view' && 'عرض صورة'}
+                  </span>
+                  <FaUser className="text-gray-400 text-xs flex-shrink-0" />
+                </div>
+                <div className="flex items-center justify-between text-xs text-gray-600">
+                  <span className="truncate">{item.page || '-'}</span>
+                  <span className="text-gray-500 flex-shrink-0 mr-2">{item.user?.name || 'زائر'}</span>
+                </div>
+                <div className="text-xs text-gray-500">
+                  {new Date(item.createdAt).toLocaleString('ar-EG', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

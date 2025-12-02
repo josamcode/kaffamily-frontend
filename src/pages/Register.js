@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/Toast';
@@ -9,6 +9,9 @@ const Register = () => {
     mobile: '',
     country: '',
     dateOfBirth: '',
+    birthDay: '',
+    birthMonth: '',
+    birthYear: '',
     college: '',
     university: '',
     residence: '',
@@ -29,10 +32,44 @@ const Register = () => {
     });
   };
 
+  // Parse dateOfBirth if it exists (for editing scenarios)
+  useEffect(() => {
+    if (formData.dateOfBirth && !formData.birthDay && !formData.birthMonth && !formData.birthYear) {
+      const date = new Date(formData.dateOfBirth);
+      if (!isNaN(date.getTime())) {
+        setFormData(prev => ({
+          ...prev,
+          birthDay: String(date.getDate()).padStart(2, '0'),
+          birthMonth: String(date.getMonth() + 1).padStart(2, '0'),
+          birthYear: String(date.getFullYear())
+        }));
+      }
+    }
+  }, [formData.dateOfBirth]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setErrors({});
+
+    // Validate date of birth
+    if (!formData.birthDay || !formData.birthMonth || !formData.birthYear) {
+      setError('يرجى إدخال تاريخ الميلاد كاملاً');
+      return;
+    }
+
+    const selectedDate = new Date(
+      parseInt(formData.birthYear),
+      parseInt(formData.birthMonth) - 1,
+      parseInt(formData.birthDay)
+    );
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate > today) {
+      setError('تاريخ الميلاد لا يمكن أن يكون في المستقبل');
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       setError('كلمات المرور غير متطابقة');
@@ -46,7 +83,7 @@ const Register = () => {
 
     setLoading(true);
 
-    const { confirmPassword, ...registerData } = formData;
+    const { confirmPassword, birthDay, birthMonth, birthYear, ...registerData } = formData;
     const result = await register(registerData);
 
     if (result.success) {
@@ -99,7 +136,7 @@ const Register = () => {
                   type="text"
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="أدخل اسمك الكامل"
+                  placeholder="جرجس صموئيل"
                   value={formData.name}
                   onChange={handleChange}
                 />
@@ -118,7 +155,7 @@ const Register = () => {
                   required
                   pattern="^01\d{9}$"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="01xxxxxxxxx"
+                  placeholder="01204770940"
                   value={formData.mobile}
                   onChange={handleChange}
                 />
@@ -137,7 +174,7 @@ const Register = () => {
                   type="text"
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="أدخل اسم البلد"
+                  placeholder="مطاى"
                   value={formData.country}
                   onChange={handleChange}
                 />
@@ -149,16 +186,122 @@ const Register = () => {
                 <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-2">
                   تاريخ الميلاد *
                 </label>
-                <input
-                  id="dateOfBirth"
-                  name="dateOfBirth"
-                  type="date"
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  value={formData.dateOfBirth}
-                  onChange={handleChange}
-                  max={new Date().toISOString().split('T')[0]}
-                />
+                <div className="grid grid-cols-3 gap-2">
+                  {/* Day */}
+                  <div className="relative">
+                    <select
+                      name="birthDay"
+                      value={formData.birthDay || ''}
+                      onChange={(e) => {
+                        const day = e.target.value;
+                        const month = formData.birthMonth || '01';
+                        const year = formData.birthYear || '2000';
+                        const dateStr = `${year}-${month}-${day.padStart(2, '0')}`;
+                        setFormData({
+                          ...formData,
+                          birthDay: day,
+                          dateOfBirth: dateStr
+                        });
+                      }}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white appearance-none cursor-pointer hover:border-gray-400 text-gray-900 font-medium"
+                    >
+                      <option value="" disabled>اليوم</option>
+                      {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                        <option key={day} value={day.toString().padStart(2, '0')}>
+                          {day}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Month */}
+                  <div className="relative">
+                    <select
+                      name="birthMonth"
+                      value={formData.birthMonth || ''}
+                      onChange={(e) => {
+                        const month = e.target.value;
+                        const day = formData.birthDay || '01';
+                        const year = formData.birthYear || '2000';
+                        const dateStr = `${year}-${month}-${day.padStart(2, '0')}`;
+                        setFormData({
+                          ...formData,
+                          birthMonth: month,
+                          dateOfBirth: dateStr
+                        });
+                      }}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white appearance-none cursor-pointer hover:border-gray-400 text-gray-900 font-medium"
+                    >
+                      <option value="" disabled>الشهر</option>
+                      {[
+                        { value: '01', label: 'يناير' },
+                        { value: '02', label: 'فبراير' },
+                        { value: '03', label: 'مارس' },
+                        { value: '04', label: 'أبريل' },
+                        { value: '05', label: 'مايو' },
+                        { value: '06', label: 'يونيو' },
+                        { value: '07', label: 'يوليو' },
+                        { value: '08', label: 'أغسطس' },
+                        { value: '09', label: 'سبتمبر' },
+                        { value: '10', label: 'أكتوبر' },
+                        { value: '11', label: 'نوفمبر' },
+                        { value: '12', label: 'ديسمبر' }
+                      ].map(month => (
+                        <option key={month.value} value={month.value}>
+                          {month.label}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Year */}
+                  <div className="relative">
+                    <select
+                      name="birthYear"
+                      value={formData.birthYear || ''}
+                      onChange={(e) => {
+                        const year = e.target.value;
+                        const day = formData.birthDay || '01';
+                        const month = formData.birthMonth || '01';
+                        const dateStr = `${year}-${month}-${day.padStart(2, '0')}`;
+                        setFormData({
+                          ...formData,
+                          birthYear: year,
+                          dateOfBirth: dateStr
+                        });
+                      }}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white appearance-none cursor-pointer hover:border-gray-400 text-gray-900 font-medium"
+                    >
+                      <option value="" disabled>السنة</option>
+                      {Array.from({ length: 100 }, (_, i) => {
+                        const year = new Date().getFullYear() - i;
+                        return year;
+                      }).map(year => (
+                        <option key={year} value={year.toString()}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
                 {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
               </div>
 
@@ -172,7 +315,7 @@ const Register = () => {
                   name="college"
                   type="text"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="أدخل اسم الكلية (اختياري)"
+                  placeholder="الهندسة"
                   value={formData.college}
                   onChange={handleChange}
                 />
@@ -188,7 +331,7 @@ const Register = () => {
                   name="university"
                   type="text"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="أدخل اسم الجامعة (اختياري)"
+                  placeholder="جامعة القاهرة"
                   value={formData.university}
                   onChange={handleChange}
                 />
@@ -204,7 +347,7 @@ const Register = () => {
                   name="residence"
                   type="text"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="أدخل عنوان السكن (اختياري)"
+                  placeholder="القاهرة"
                   value={formData.residence}
                   onChange={handleChange}
                 />
@@ -221,7 +364,7 @@ const Register = () => {
                   type="password"
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="أدخل كلمة المرور (6 أحرف على الأقل)"
+                  placeholder="12345678"
                   value={formData.password}
                   onChange={handleChange}
                 />
@@ -240,7 +383,7 @@ const Register = () => {
                   type="password"
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="أعد إدخال كلمة المرور"
+                  placeholder="12345678"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                 />

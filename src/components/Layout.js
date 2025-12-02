@@ -102,8 +102,9 @@ const Layout = ({ children }) => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <div className="min-h-screen bg-gray-50 flex flex-col pb-20 lg:pb-0">
+      {/* Desktop Header - Hidden on Mobile */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm hidden lg:block">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="flex items-center justify-between h-20">
             {/* Desktop Navigation */}
@@ -272,136 +273,126 @@ const Layout = ({ children }) => {
                 </div>
               )}
             </Link>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors order-1"
-              aria-label="القائمة"
-            >
-              {mobileMenuOpen ? (
-                <FaTimes className="w-6 h-6" />
-              ) : (
-                <FaBars className="w-6 h-6" />
-              )}
-            </button>
           </div>
-
-          {/* Mobile Navigation */}
-          {mobileMenuOpen && (
-            <nav className="lg:hidden border-t border-gray-200 py-4">
-              <div className="flex flex-col gap-1">
-                {user ? (
-                  <>
-                    <Link
-                      to="/"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center gap-3 ${isActive('/')
-                        ? 'text-white'
-                        : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      style={isActive('/') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
-                    >
-                      <FaHome />
-                      <span>الرئيسية</span>
-                    </Link>
-                    <Link
-                      to="/collections"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center gap-3 ${isActive('/collections')
-                        ? 'text-white'
-                        : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      style={isActive('/collections') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
-                    >
-                      <FaImages />
-                      <span>الصور</span>
-                    </Link>
-                    <Link
-                      to="/games"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center gap-3 ${isActive('/games')
-                        ? 'text-white'
-                        : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      style={isActive('/games') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
-                    >
-                      <FaGamepad />
-                      <span>الألعاب</span>
-                    </Link>
-                    <Link
-                      to="/contact"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center gap-3 ${isActive('/contact')
-                        ? 'text-white'
-                        : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      style={isActive('/contact') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
-                    >
-                      <FaEnvelope />
-                      <span>التواصل</span>
-                    </Link>
-                    {isAdmin && (
-                      <Link
-                        to="/admin"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={`px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center gap-3 ${location.pathname.startsWith('/admin')
-                          ? 'text-white'
-                          : 'text-gray-700 hover:bg-gray-50'
-                          }`}
-                        style={location.pathname.startsWith('/admin') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
-                      >
-                        <FaCog />
-                        <span>لوحة التحكم</span>
-                      </Link>
-                    )}
-                    <Link
-                      to="/profile"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="px-4 py-3 border-t border-gray-200 mt-2 flex items-center gap-3 text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm"
-                        style={{ backgroundColor: settings?.colors?.primary || '#1F2937' }}
-                      >
-                        {user.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-gray-900">{user.name}</span>
-                        <span className="text-xs text-gray-500">
-                          {isAdmin ? 'مدير' : 'مستخدم'}
-                        </span>
-                      </div>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      to="/login"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium text-sm transition-colors text-center"
-                    >
-                      تسجيل الدخول
-                    </Link>
-                    <Link
-                      to="/register"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="px-4 py-3 text-white rounded-lg font-medium text-sm transition-all shadow-sm text-center"
-                      style={{ backgroundColor: settings?.colors?.primary || '#1F2937' }}
-                    >
-                      إنشاء حساب
-                    </Link>
-                  </>
-                )}
-              </div>
-            </nav>
-          )}
         </div>
       </header>
 
+      {/* Mobile Header - Hidden on Mobile */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm hidden">
+        <div className="px-4">
+          <div className="flex items-center justify-center h-16">
+            <Link to="/" className="flex items-center gap-3">
+              {settings?.header?.logoImage ? (
+                <img
+                  src={settings.header.logoImage}
+                  alt={settings?.header?.logoText || 'KAF'}
+                  className="h-8 w-auto"
+                />
+              ) : (
+                <div
+                  className="text-lg"
+                  style={{
+                    fontFamily: '"Playwrite NO", cursive',
+                    fontOpticalSizing: 'auto',
+                    fontWeight: 400,
+                    fontStyle: 'normal',
+                    color: settings?.colors?.primary || '#1F2937',
+                    letterSpacing: '0.1em'
+                  }}
+                >
+                  {settings?.header?.logoText || 'KAF'}
+                </div>
+              )}
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Bottom Navigation for Mobile */}
+      {user && (
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg">
+          <div className="flex justify-around items-center h-16 px-2">
+            <Link
+              to="/"
+              className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${isActive('/')
+                ? 'text-white'
+                : 'text-gray-600'
+                }`}
+              style={isActive('/') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
+            >
+              <FaHome className={`text-xl mb-1 ${isActive('/') ? '' : 'text-gray-500'}`} />
+              <span className="text-xs font-medium">الرئيسية</span>
+            </Link>
+            <Link
+              to="/collections"
+              className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${isActive('/collections')
+                ? 'text-white'
+                : 'text-gray-600'
+                }`}
+              style={isActive('/collections') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
+            >
+              <FaImages className={`text-xl mb-1 ${isActive('/collections') ? '' : 'text-gray-500'}`} />
+              <span className="text-xs font-medium">الصور</span>
+            </Link>
+            <Link
+              to="/games"
+              className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${isActive('/games')
+                ? 'text-white'
+                : 'text-gray-600'
+                }`}
+              style={isActive('/games') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
+            >
+              <FaGamepad className={`text-xl mb-1 ${isActive('/games') ? '' : 'text-gray-500'}`} />
+              <span className="text-xs font-medium">الألعاب</span>
+            </Link>
+            <Link
+              to="/contact"
+              className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${isActive('/contact')
+                ? 'text-white'
+                : 'text-gray-600'
+                }`}
+              style={isActive('/contact') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
+            >
+              <FaEnvelope className={`text-xl mb-1 ${isActive('/contact') ? '' : 'text-gray-500'}`} />
+              <span className="text-xs font-medium">التواصل</span>
+            </Link>
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${location.pathname.startsWith('/admin')
+                  ? 'text-white'
+                  : 'text-gray-600'
+                  }`}
+                style={location.pathname.startsWith('/admin') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
+              >
+                <FaCog className={`text-xl mb-1 ${location.pathname.startsWith('/admin') ? '' : 'text-gray-500'}`} />
+                <span className="text-xs font-medium">الإدارة</span>
+              </Link>
+            )}
+            <Link
+              to="/profile"
+              className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${isActive('/profile')
+                ? 'text-white'
+                : 'text-gray-600'
+                }`}
+              style={isActive('/profile') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
+            >
+              <div
+                className={`w-6 h-6 rounded-full flex items-center justify-center text-white font-semibold text-xs mb-1 ${isActive('/profile') ? 'ring-2 ring-white' : ''}`}
+                style={{ backgroundColor: settings?.colors?.primary || '#1F2937' }}
+              >
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <span className="text-xs font-medium">حسابي</span>
+            </Link>
+          </div>
+        </nav>
+      )}
+
       <main className="flex-1">{children}</main>
 
-      <footer className="bg-gray-800 text-white mt-auto">
+      {/* Footer - Hidden on Mobile */}
+      <footer className="bg-gray-800 text-white mt-auto hidden lg:block">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
             <div>

@@ -203,22 +203,24 @@ const AdminCollections = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <FaImages className="text-gray-600" />
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 mb-6">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <FaImages className="text-gray-600 text-base md:text-xl" />
           إدارة المجموعات
         </h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full md:w-auto">
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+            className="flex-1 md:flex-none px-3 md:px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg text-sm md:text-base font-medium transition-colors flex items-center justify-center gap-2"
           >
-            <FaPlus />
-            مجموعة جديدة
+            <FaPlus className="text-sm" />
+            <span className="hidden sm:inline">مجموعة جديدة</span>
+            <span className="sm:hidden">جديد</span>
           </button>
-          <Link to="/collections" className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors flex items-center gap-2">
-            <FaExternalLinkAlt />
-            عرض الصفحة العامة
+          <Link to="/collections" className="flex-1 md:flex-none px-3 md:px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm md:text-base font-medium transition-colors flex items-center justify-center gap-2">
+            <FaExternalLinkAlt className="text-sm" />
+            <span className="hidden sm:inline">عرض الصفحة</span>
+            <span className="sm:hidden">عرض</span>
           </Link>
         </div>
       </div>

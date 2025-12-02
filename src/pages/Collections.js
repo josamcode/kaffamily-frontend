@@ -601,15 +601,15 @@ const Collections = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-4 md:py-6">
       {/* Header with Search and Filters */}
-      <div className="mb-6 space-y-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-            <FaImages className="text-gray-600" />
+      <div className="mb-4 md:mb-6 space-y-3 md:space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 md:gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2">
+            <FaImages className="text-gray-600 text-xl md:text-3xl" />
             معرض الصور
           </h1>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto">
             {/* {isAdmin && (
               <button
                 onClick={() => setShowCreateModal(true)}
@@ -621,12 +621,12 @@ const Collections = () => {
             )} */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${showFilters
+              className={`flex-1 sm:flex-none px-3 py-2 md:px-4 md:py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-sm md:text-base ${showFilters
                 ? 'bg-gray-800 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
             >
-              <FaFilter />
+              <FaFilter className="text-sm" />
               فلاتر
             </button>
           </div>
@@ -634,31 +634,31 @@ const Collections = () => {
 
         {/* Search Bar - Only show in images view */}
         {viewMode === 'images' && (
-          <div className="relative mt-4">
-            <FaSearch className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <div className="relative mt-3 md:mt-4">
+            <FaSearch className="absolute right-3 md:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" />
             <input
               type="text"
               placeholder="ابحث عن الصور..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pr-12 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+              className="w-full pr-10 md:pr-12 pl-3 md:pl-4 py-2 md:py-3 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
             />
           </div>
         )}
 
         {/* Filters Panel */}
         {showFilters && (
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-4 md:p-6 shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                  <FaSortAmountDown />
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2 flex items-center gap-2">
+                  <FaSortAmountDown className="text-xs" />
                   الترتيب حسب
                 </label>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  className="w-full px-3 py-2 md:px-4 md:py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 >
                   <option value="date">التاريخ</option>
                   <option value="name">الاسم</option>
@@ -666,25 +666,25 @@ const Collections = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">الاتجاه</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">الاتجاه</label>
                 <select
                   value={sortOrder}
                   onChange={(e) => setSortOrder(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  className="w-full px-3 py-2 md:px-4 md:py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 >
                   <option value="desc">تنازلي</option>
                   <option value="asc">تصاعدي</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                  <FaCalendarAlt />
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2 flex items-center gap-2">
+                  <FaCalendarAlt className="text-xs" />
                   الفترة الزمنية
                 </label>
                 <select
                   value={dateFilter}
                   onChange={(e) => setDateFilter(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  className="w-full px-3 py-2 md:px-4 md:py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 >
                   <option value="all">الكل</option>
                   <option value="today">اليوم</option>
@@ -694,11 +694,11 @@ const Collections = () => {
                 </select>
               </div>
               <div className="md:col-span-3">
-                <label className="block text-sm font-medium text-gray-700 mb-2">المجموعة</label>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">المجموعة</label>
                 <select
                   value={collectionFilter}
                   onChange={(e) => setCollectionFilter(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  className="w-full px-3 py-2 md:px-4 md:py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 >
                   <option value="all">جميع المجموعات</option>
                   {collections.map(collection => (
@@ -714,29 +714,30 @@ const Collections = () => {
 
         {/* Selection Bar */}
         {selectedImages.size > 0 && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <span className="font-medium text-gray-800">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3 md:gap-4">
+              <span className="font-medium text-gray-800 text-sm md:text-base">
                 تم اختيار {selectedImages.size} صورة
               </span>
               <button
                 onClick={toggleSelectAll}
-                className="text-sm text-blue-600 hover:text-blue-800"
+                className="text-xs md:text-sm text-blue-600 hover:text-blue-800"
               >
                 {selectedImages.size === filteredImages.length ? 'إلغاء الكل' : 'تحديد الكل'}
               </button>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full sm:w-auto">
               <button
                 onClick={handleDownloadSelected}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                className="flex-1 sm:flex-none px-3 py-2 md:px-4 md:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-xs md:text-base"
               >
-                <FaDownload />
-                تحميل المحدد ({selectedImages.size})
+                <FaDownload className="text-xs" />
+                <span className="hidden sm:inline">تحميل المحدد ({selectedImages.size})</span>
+                <span className="sm:hidden">تحميل ({selectedImages.size})</span>
               </button>
               <button
                 onClick={() => setSelectedImages(new Set())}
-                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors"
+                className="px-3 py-2 md:px-4 md:py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors text-xs md:text-base"
               >
                 إلغاء
               </button>
@@ -749,20 +750,20 @@ const Collections = () => {
       {viewMode === 'collections' && (
         <div>
           {collections.length === 0 ? (
-            <div className="text-center py-16">
-              <FaImages className="text-6xl text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600 text-xl">لا توجد مجموعات</p>
+            <div className="text-center py-12 md:py-16">
+              <FaImages className="text-4xl md:text-6xl text-gray-300 mx-auto mb-3 md:mb-4" />
+              <p className="text-gray-600 text-base md:text-xl">لا توجد مجموعات</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
               {collections.map((collection) => (
                 <div
                   key={collection._id}
                   onClick={() => handleCollectionSelect(collection)}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1 border border-gray-200"
+                  className="bg-white rounded-lg md:rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1 border border-gray-200"
                 >
                   {/* Cover Image */}
-                  <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200">
+                  <div className="relative h-48 md:h-64 bg-gradient-to-br from-gray-100 to-gray-200">
                     {collection.coverImage ? (
                       <img
                         src={`${apiServerUrl}/${collection.coverImage}`}
@@ -771,43 +772,43 @@ const Collections = () => {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <FaImages className="text-6xl text-gray-400" />
+                        <FaImages className="text-4xl md:text-6xl text-gray-400" />
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    <div className="absolute bottom-4 right-4 left-4">
-                      <h3 className="text-xl font-bold text-white mb-1">{collection.name}</h3>
-                      <p className="text-sm text-white/90 flex items-center gap-2">
-                        <FaImages />
+                    <div className="absolute bottom-3 md:bottom-4 right-3 md:right-4 left-3 md:left-4">
+                      <h3 className="text-lg md:text-xl font-bold text-white mb-1">{collection.name}</h3>
+                      <p className="text-xs md:text-sm text-white/90 flex items-center gap-2">
+                        <FaImages className="text-xs" />
                         {collection.images?.length || 0} صورة
                       </p>
                     </div>
                   </div>
 
                   {/* Collection Info */}
-                  <div className="p-5">
+                  <div className="p-4 md:p-5">
                     {collection.description && (
-                      <p className="text-gray-600 mb-4 line-clamp-2 text-sm">{collection.description}</p>
+                      <p className="text-gray-600 mb-3 md:mb-4 line-clamp-2 text-xs md:text-sm">{collection.description}</p>
                     )}
                     {collection.tags && collection.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-1 md:gap-2 mb-3 md:mb-4">
                         {collection.tags.slice(0, 3).map((tag, index) => (
                           <span
                             key={index}
-                            className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
+                            className="px-2 py-0.5 md:py-1 bg-gray-100 text-gray-700 rounded text-xs"
                           >
                             {tag}
                           </span>
                         ))}
                         {collection.tags.length > 3 && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                          <span className="px-2 py-0.5 md:py-1 bg-gray-100 text-gray-700 rounded text-xs">
                             +{collection.tags.length - 3}
                           </span>
                         )}
                       </div>
                     )}
-                    <button className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
-                      <FaImages />
+                    <button className="w-full px-3 py-2 md:px-4 md:py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-sm md:text-base">
+                      <FaImages className="text-xs md:text-base" />
                       عرض الصور
                     </button>
                   </div>
@@ -822,32 +823,33 @@ const Collections = () => {
       {viewMode === 'images' && (
         <>
           {selectedCollection && (
-            <div className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">{selectedCollection.name}</h2>
+            <div className="mb-4 md:mb-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg md:rounded-xl p-4 md:p-6 border border-blue-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 md:gap-4">
+                <div className="flex-1">
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-1 md:mb-2">{selectedCollection.name}</h2>
                   {selectedCollection.description && (
-                    <p className="text-gray-600 mb-2">{selectedCollection.description}</p>
+                    <p className="text-gray-600 mb-1 md:mb-2 text-sm md:text-base">{selectedCollection.description}</p>
                   )}
-                  <p className="text-sm text-gray-500">
+                  <p className="text-xs md:text-sm text-gray-500">
                     {filteredImages.length} صورة في هذه المجموعة
                   </p>
                 </div>
                 <button
                   onClick={handleDownloadCollection}
-                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors flex items-center gap-2 shadow-lg"
+                  className="w-full sm:w-auto px-4 py-2 md:px-6 md:py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg text-sm md:text-base"
                 >
-                  <FaDownload />
-                  تحميل الصور
+                  <FaDownload className="text-xs md:text-base" />
+                  <span className="hidden sm:inline">تحميل الصور</span>
+                  <span className="sm:hidden">تحميل</span>
                 </button>
               </div>
             </div>
           )}
 
           {filteredImages.length === 0 ? (
-            <div className="text-center py-16">
-              <FaImages className="text-6xl text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600 text-xl">لا توجد صور في هذه المجموعة</p>
+            <div className="text-center py-12 md:py-16">
+              <FaImages className="text-4xl md:text-6xl text-gray-300 mx-auto mb-3 md:mb-4" />
+              <p className="text-gray-600 text-base md:text-xl">لا توجد صور في هذه المجموعة</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
@@ -856,44 +858,44 @@ const Collections = () => {
                 return (
                   <div
                     key={image._id}
-                    className={`relative group cursor-pointer rounded-lg overflow-hidden ${isSelected ? 'ring-4 ring-blue-500' : ''
+                    className={`relative group cursor-pointer rounded-lg overflow-hidden ${isSelected ? 'ring-2 md:ring-4 ring-blue-500' : ''
                       }`}
                     onClick={() => handleImageClick(image, index)}
                   >
                     <img
                       src={`${apiServerUrl}/${image.path}`}
                       alt={image.originalName || 'صورة'}
-                      className="w-full h-48 object-cover transition-transform duration-200 group-hover:scale-105"
+                      className="w-full h-32 md:h-48 object-cover transition-transform duration-200 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 md:gap-2">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDownloadImage(image.path, image.originalName);
                           }}
-                          className="p-2 bg-white rounded-full hover:bg-gray-100 transition-colors"
+                          className="p-1.5 md:p-2 bg-white rounded-full hover:bg-gray-100 transition-colors"
                           title="تحميل"
                         >
-                          <FaDownload className="text-gray-700" />
+                          <FaDownload className="text-gray-700 text-xs md:text-base" />
                         </button>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleImageSelection(image._id);
                           }}
-                          className={`p-2 rounded-full transition-colors ${isSelected
+                          className={`p-1.5 md:p-2 rounded-full transition-colors ${isSelected
                             ? 'bg-blue-600 text-white'
                             : 'bg-white hover:bg-gray-100 text-gray-700'
                             }`}
                           title={isSelected ? 'إلغاء التحديد' : 'تحديد'}
                         >
-                          {isSelected ? <FaCheckSquare /> : <FaSquare />}
+                          {isSelected ? <FaCheckSquare className="text-xs md:text-base" /> : <FaSquare className="text-xs md:text-base" />}
                         </button>
                       </div>
                     </div>
                     {isSelected && (
-                      <div className="absolute top-2 right-2 bg-blue-600 text-white p-1 rounded-full">
+                      <div className="absolute top-1 md:top-2 right-1 md:right-2 bg-blue-600 text-white p-0.5 md:p-1 rounded-full">
                         <FaCheck className="text-xs" />
                       </div>
                     )}

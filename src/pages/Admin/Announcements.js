@@ -6,7 +6,7 @@ import Modal from '../../components/Modal';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import {
   FaBullhorn, FaPlus, FaEdit, FaTrash, FaCheckCircle, FaTimesCircle,
-  FaCalendarAlt, FaImage, FaBell, FaBellSlash
+  FaCalendarAlt, FaImage, FaBell, FaBellSlash, FaUpload
 } from 'react-icons/fa';
 
 const AdminAnnouncements = () => {
@@ -22,6 +22,7 @@ const AdminAnnouncements = () => {
     isActive: true,
     expiresAt: ''
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [announcementToDelete, setAnnouncementToDelete] = useState(null);
   const { showToast } = useToast();
@@ -114,95 +115,177 @@ const AdminAnnouncements = () => {
     }
   };
 
+  const handleImageUpload = async (e, announcementId) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await api.post(`/announcements/${announcementId}/image`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      showToast('تم رفع الصورة بنجاح', 'success');
+      fetchAnnouncements();
+    } catch (error) {
+      showToast('خطأ في رفع الصورة: ' + (error.response?.data?.message || error.message), 'error');
+    } finally {
+      setUploadingImage(false);
+      e.target.value = ''; // Reset input
+    }
+  };
+
+  const handleRemoveImage = async (announcementId) => {
+    try {
+      await api.put(`/announcements/${announcementId}`, { image: '' });
+      showToast('تم حذف الصورة بنجاح', 'success');
+      fetchAnnouncements();
+    } catch (error) {
+      showToast('خطأ في حذف الصورة', 'error');
+    }
+  };
+
   if (loading) return <Loading fullScreen />;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold flex items-center gap-2">
-          <FaBullhorn className="text-blue-600" />
+    <div className="container mx-auto px-4 py-6 md:py-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 mb-6">
+        <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2">
+          <FaBullhorn className="text-blue-600 text-base md:text-2xl" />
           إدارة الإعلانات
         </h1>
-        <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-          <FaPlus />
+        <button onClick={handleCreate} className="w-full md:w-auto btn-primary text-sm md:text-base flex items-center justify-center gap-2 px-3 md:px-4">
+          <FaPlus className="text-sm" />
           إعلان جديد
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {announcements.length === 0 ? (
-          <div className="col-span-full text-center py-16">
-            <FaBullhorn className="text-6xl text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-600 text-xl">لا توجد إعلانات</p>
+          <div className="col-span-full text-center py-12 md:py-16">
+            <FaBullhorn className="text-4xl md:text-6xl text-gray-300 mx-auto mb-3 md:mb-4" />
+            <p className="text-gray-600 text-base md:text-xl">لا توجد إعلانات</p>
           </div>
         ) : (
-          announcements.map((announcement) => (
-            <div
-              key={announcement._id}
-              className={`card ${!announcement.isActive ? 'opacity-60' : ''}`}
-            >
-              {announcement.image && (
-                <img
-                  src={`${process.env.REACT_APP_API_SERVER_URL || 'http://localhost:5000'}${announcement.image}`}
-                  alt={announcement.title}
-                  className="w-full h-48 object-cover rounded-lg mb-4"
-                />
-              )}
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xl font-semibold">{announcement.title}</h3>
-                <span
-                  className={`px-2 py-1 rounded text-xs flex items-center gap-1 ${announcement.isActive
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-gray-100 text-gray-800'
-                    }`}
-                >
-                  {announcement.isActive ? <FaBell /> : <FaBellSlash />}
-                  {announcement.isActive ? 'نشط' : 'غير نشط'}
-                </span>
-              </div>
-              <p className="text-gray-600 mb-4 line-clamp-3">{announcement.content}</p>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm text-blue-600">
-                  {announcement.type === 'meeting' && 'اجتماع'}
-                  {announcement.type === 'trip' && 'رحلة'}
-                  {announcement.type === 'outing' && 'نزهة'}
-                  {announcement.type === 'general' && 'عام'}
-                </span>
-                {announcement.expiresAt && (
-                  <span className="text-sm text-gray-500 flex items-center gap-1">
-                    <FaCalendarAlt />
-                    ينتهي: {new Date(announcement.expiresAt).toLocaleDateString('ar-EG')}
+          announcements.map((announcement) => {
+            const apiServerUrl = process.env.REACT_APP_API_SERVER_URL || 'http://localhost:5000';
+            return (
+              <div
+                key={announcement._id}
+                className={`card p-3 md:p-6 ${!announcement.isActive ? 'opacity-60' : ''}`}
+              >
+                {/* Image Section - Square */}
+                <div className="relative w-full aspect-square mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden">
+                  {announcement.image ? (
+                    <>
+                      <img
+                        src={`${apiServerUrl}/${announcement.image}`}
+                        alt={announcement.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2 flex gap-1.5 md:gap-2">
+                        <label className="cursor-pointer p-1.5 md:p-2 bg-white/90 hover:bg-white rounded-full shadow-md transition-colors">
+                          <FaImage className="text-gray-700 text-xs md:text-sm" />
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageUpload(e, announcement._id)}
+                            className="hidden"
+                            disabled={uploadingImage}
+                          />
+                        </label>
+                        <button
+                          onClick={() => handleRemoveImage(announcement._id)}
+                          className="p-1.5 md:p-2 bg-white/90 hover:bg-white rounded-full shadow-md transition-colors"
+                          title="حذف الصورة"
+                        >
+                          <FaTimesCircle className="text-red-600 text-xs md:text-sm" />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="text-center">
+                        <FaImage className="text-3xl md:text-4xl text-gray-400 mx-auto mb-2" />
+                        <label className="cursor-pointer inline-flex items-center gap-2 px-3 md:px-4 py-2 bg-white hover:bg-gray-50 rounded-lg shadow-sm transition-colors text-xs md:text-sm text-gray-700">
+                          <FaImage className="text-xs" />
+                          رفع صورة
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageUpload(e, announcement._id)}
+                            className="hidden"
+                            disabled={uploadingImage}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-base md:text-xl font-semibold truncate">{announcement.title}</h3>
+                  <span
+                    className={`px-2 py-1 rounded text-xs flex items-center gap-1 flex-shrink-0 ${announcement.isActive
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-800'
+                      }`}
+                  >
+                    {announcement.isActive ? <FaBell className="text-xs" /> : <FaBellSlash className="text-xs" />}
+                    <span className="hidden sm:inline">{announcement.isActive ? 'نشط' : 'غير نشط'}</span>
                   </span>
-                )}
+                </div>
+                <p className="text-gray-600 mb-3 md:mb-4 line-clamp-3 text-xs md:text-sm">{announcement.content}</p>
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 mb-3 md:mb-4">
+                  <span className="text-xs md:text-sm text-blue-600">
+                    {announcement.type === 'meeting' && 'اجتماع'}
+                    {announcement.type === 'trip' && 'رحلة'}
+                    {announcement.type === 'outing' && 'خروجة'}
+                    {announcement.type === 'general' && 'عام'}
+                  </span>
+                  {announcement.expiresAt && (
+                    <span className="text-xs md:text-sm text-gray-500 flex items-center gap-1">
+                      <FaCalendarAlt className="text-xs" />
+                      <span className="hidden sm:inline">ينتهي: </span>
+                      {new Date(announcement.expiresAt).toLocaleDateString('ar-EG')}
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <button
+                    onClick={() => handleEdit(announcement)}
+                    className="btn-secondary text-xs md:text-sm flex items-center justify-center gap-1 px-3 py-2"
+                  >
+                    <FaEdit className="text-xs" />
+                    تعديل
+                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => toggleActive(announcement)}
+                      className={`flex-1 text-xs md:text-sm px-3 py-2 rounded-lg flex items-center justify-center gap-1 ${announcement.isActive
+                        ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                        : 'bg-green-100 text-green-800 hover:bg-green-200'
+                        }`}
+                    >
+                      {announcement.isActive ? <FaBellSlash className="text-xs" /> : <FaBell className="text-xs" />}
+                      {announcement.isActive ? 'تعطيل' : 'تفعيل'}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(announcement._id)}
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-xs md:text-sm flex items-center justify-center gap-1"
+                    >
+                      <FaTrash className="text-xs" />
+                      حذف
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleEdit(announcement)}
-                  className="btn-secondary flex-1 text-sm flex items-center justify-center gap-1"
-                >
-                  <FaEdit />
-                  تعديل
-                </button>
-                <button
-                  onClick={() => toggleActive(announcement)}
-                  className={`text-sm px-4 py-2 rounded-lg flex items-center gap-1 ${announcement.isActive
-                    ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
-                    : 'bg-green-100 text-green-800 hover:bg-green-200'
-                    }`}
-                >
-                  {announcement.isActive ? <FaBellSlash /> : <FaBell />}
-                  {announcement.isActive ? 'تعطيل' : 'تفعيل'}
-                </button>
-                <button
-                  onClick={() => handleDelete(announcement._id)}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-1"
-                >
-                  <FaTrash />
-                  حذف
-                </button>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
@@ -246,20 +329,39 @@ const AdminAnnouncements = () => {
               <option value="general">عام</option>
               <option value="meeting">اجتماع</option>
               <option value="trip">رحلة</option>
-              <option value="outing">نزهة</option>
+              <option value="outing">خروجة</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">صورة (URL)</label>
-            <input
-              type="text"
-              className="input-field"
-              value={formData.image}
-              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-            />
+            <label className="block text-sm font-medium mb-2">صورة الإعلان</label>
+            {formData.image ? (
+              <div className="relative">
+                <div className="w-full aspect-square max-w-xs mx-auto mb-3 bg-gray-100 rounded-lg overflow-hidden">
+                  <img
+                    src={`${process.env.REACT_APP_API_SERVER_URL || 'http://localhost:5000'}/${formData.image}`}
+                    alt="Announcement"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, image: '' })}
+                  className="absolute top-0 right-0 p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
+                >
+                  <FaTimesCircle className="text-sm" />
+                </button>
+                <p className="text-xs text-gray-500 text-center">يمكنك رفع صورة بعد إنشاء الإعلان</p>
+              </div>
+            ) : (
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <FaImage className="text-4xl text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 mb-2">لا توجد صورة</p>
+                <p className="text-xs text-gray-500">يمكنك رفع صورة بعد إنشاء الإعلان</p>
+              </div>
+            )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2 flex items-center gap-2">
+            <label className="flex items-center gap-2 text-sm font-medium mb-2">
               <FaCalendarAlt />
               تاريخ الانتهاء
             </label>

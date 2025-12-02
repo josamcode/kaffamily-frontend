@@ -109,121 +109,122 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">لوحة التحكم</h1>
+    <div className="container mx-auto px-4 py-4 md:py-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-800">لوحة التحكم</h1>
         <button
           onClick={fetchDashboardData}
-          className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors flex items-center gap-2"
+          className="px-3 py-2 md:px-4 md:py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-sm md:text-base"
         >
-          <FaSyncAlt />
-          تحديث البيانات
+          <FaSyncAlt className="text-sm" />
+          <span className="hidden sm:inline">تحديث البيانات</span>
+          <span className="sm:hidden">تحديث</span>
         </button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4 mb-4 md:mb-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 md:p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm text-gray-600 mb-2">زيارات اليوم</h3>
-              <p className="text-3xl font-bold text-gray-800">{stats.todayVisits || 0}</p>
+              <h3 className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">زيارات اليوم</h3>
+              <p className="text-xl md:text-3xl font-bold text-gray-800">{stats.todayVisits || 0}</p>
             </div>
-            <FaChartBar className="text-3xl text-gray-400" />
+            <FaChartBar className="text-2xl md:text-3xl text-gray-400" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 md:p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm text-gray-600 mb-2">زيارات هذا الأسبوع</h3>
-              <p className="text-3xl font-bold text-gray-800">{stats.thisWeekVisits || 0}</p>
+              <h3 className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">هذا الأسبوع</h3>
+              <p className="text-xl md:text-3xl font-bold text-gray-800">{stats.thisWeekVisits || 0}</p>
             </div>
-            <FaChartBar className="text-3xl text-gray-400" />
+            <FaChartBar className="text-2xl md:text-3xl text-gray-400" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 md:p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm text-gray-600 mb-2">زيارات هذا الشهر</h3>
-              <p className="text-3xl font-bold text-gray-800">{stats.thisMonthVisits || 0}</p>
+              <h3 className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">هذا الشهر</h3>
+              <p className="text-xl md:text-3xl font-bold text-gray-800">{stats.thisMonthVisits || 0}</p>
             </div>
-            <FaChartBar className="text-3xl text-gray-400" />
+            <FaChartBar className="text-2xl md:text-3xl text-gray-400" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 md:p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm text-gray-600 mb-2">إجمالي الزيارات</h3>
-              <p className="text-3xl font-bold text-gray-800">{stats.totalVisits || 0}</p>
+              <h3 className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">إجمالي</h3>
+              <p className="text-xl md:text-3xl font-bold text-gray-800">{stats.totalVisits || 0}</p>
             </div>
-            <FaChartBar className="text-3xl text-gray-400" />
+            <FaChartBar className="text-2xl md:text-3xl text-gray-400" />
           </div>
         </div>
       </div>
 
       {/* Content Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4 mb-4 md:mb-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 md:p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">المجموعات</p>
-              <p className="text-2xl font-bold text-gray-800">{counts.collections}</p>
+              <p className="text-xs md:text-sm text-gray-600">المجموعات</p>
+              <p className="text-lg md:text-2xl font-bold text-gray-800">{counts.collections}</p>
             </div>
-            <FaImages className="text-2xl text-gray-400" />
+            <FaImages className="text-xl md:text-2xl text-gray-400" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 md:p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">الألعاب</p>
-              <p className="text-2xl font-bold text-gray-800">{counts.games}</p>
+              <p className="text-xs md:text-sm text-gray-600">الألعاب</p>
+              <p className="text-lg md:text-2xl font-bold text-gray-800">{counts.games}</p>
             </div>
-            <FaGamepad className="text-2xl text-gray-400" />
+            <FaGamepad className="text-xl md:text-2xl text-gray-400" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 md:p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">الإعلانات</p>
-              <p className="text-2xl font-bold text-gray-800">{counts.announcements}</p>
+              <p className="text-xs md:text-sm text-gray-600">الإعلانات</p>
+              <p className="text-lg md:text-2xl font-bold text-gray-800">{counts.announcements}</p>
             </div>
-            <FaBullhorn className="text-2xl text-gray-400" />
+            <FaBullhorn className="text-xl md:text-2xl text-gray-400" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 md:p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">الفريق</p>
-              <p className="text-2xl font-bold text-gray-800">{counts.staff}</p>
+              <p className="text-xs md:text-sm text-gray-600">الفريق</p>
+              <p className="text-lg md:text-2xl font-bold text-gray-800">{counts.staff}</p>
             </div>
-            <FaUserTie className="text-2xl text-gray-400" />
+            <FaUserTie className="text-xl md:text-2xl text-gray-400" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 md:p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">المستخدمون</p>
-              <p className="text-2xl font-bold text-gray-800">{counts.totalUsers}</p>
+              <p className="text-xs md:text-sm text-gray-600">المستخدمون</p>
+              <p className="text-lg md:text-2xl font-bold text-gray-800">{counts.totalUsers}</p>
             </div>
-            <FaUsers className="text-2xl text-gray-400" />
+            <FaUsers className="text-xl md:text-2xl text-gray-400" />
           </div>
         </div>
       </div>
 
       {/* Quick Links */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-        <h2 className="text-xl font-bold mb-4 text-gray-800">روابط سريعة</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6 mb-4 md:mb-6">
+        <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-gray-800">روابط سريعة</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 md:gap-4">
           {quickLinks.map((link) => {
             const IconComponent = link.icon;
             return (
               <Link
                 key={link.to}
                 to={link.to}
-                className="p-4 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all hover:shadow-sm text-center"
+                className="p-3 md:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all hover:shadow-sm text-center"
               >
-                <IconComponent className="text-3xl mb-2 mx-auto text-gray-600" />
-                <h3 className="font-medium text-sm text-gray-700">{link.label}</h3>
+                <IconComponent className="text-2xl md:text-3xl mb-1 md:mb-2 mx-auto text-gray-600" />
+                <h3 className="font-medium text-xs md:text-sm text-gray-700">{link.label}</h3>
               </Link>
             );
           })}
@@ -232,38 +233,41 @@ const AdminDashboard = () => {
 
       {/* Pending Users */}
       {pendingUsers.length > 0 && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold flex items-center gap-2 text-gray-800">
-              <FaClock className="text-gray-600" />
-              طلبات التسجيل المعلقة ({pendingUsers.length})
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6 mb-4 md:mb-6">
+          <div className="flex items-center justify-between mb-3 md:mb-4">
+            <h2 className="text-lg md:text-xl font-bold flex items-center gap-2 text-gray-800">
+              <FaClock className="text-gray-600 text-base md:text-xl" />
+              <span className="hidden sm:inline">طلبات التسجيل المعلقة ({pendingUsers.length})</span>
+              <span className="sm:hidden">طلبات معلقة ({pendingUsers.length})</span>
             </h2>
           </div>
-          <div className="overflow-x-auto">
+
+          {/* Desktop Table */}
+          <div className="hidden lg:block overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b bg-gray-50">
-                  <th className="text-right p-4 font-semibold">الاسم</th>
-                  <th className="text-right p-4 font-semibold">رقم الجوال</th>
-                  <th className="text-right p-4 font-semibold">البلد</th>
-                  <th className="text-right p-4 font-semibold">السنة</th>
-                  <th className="text-right p-4 font-semibold">الكلية</th>
-                  <th className="text-right p-4 font-semibold">الإجراءات</th>
+                  <th className="text-right p-4 font-semibold text-sm">الاسم</th>
+                  <th className="text-right p-4 font-semibold text-sm">رقم الجوال</th>
+                  <th className="text-right p-4 font-semibold text-sm">البلد</th>
+                  <th className="text-right p-4 font-semibold text-sm">السنة</th>
+                  <th className="text-right p-4 font-semibold text-sm">الكلية</th>
+                  <th className="text-right p-4 font-semibold text-sm">الإجراءات</th>
                 </tr>
               </thead>
               <tbody>
                 {pendingUsers.map((user) => (
                   <tr key={user._id} className="border-b hover:bg-gray-50 transition-colors">
-                    <td className="p-4">{user.name}</td>
-                    <td className="p-4 font-mono">{user.mobile}</td>
-                    <td className="p-4">{user.country}</td>
-                    <td className="p-4">{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('ar-EG') : '-'}</td>
-                    <td className="p-4">{user.college || '-'}</td>
+                    <td className="p-4 text-sm">{user.name}</td>
+                    <td className="p-4 font-mono text-sm">{user.mobile}</td>
+                    <td className="p-4 text-sm">{user.country}</td>
+                    <td className="p-4 text-sm">{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('ar-EG') : '-'}</td>
+                    <td className="p-4 text-sm">{user.college || '-'}</td>
                     <td className="p-4">
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleApprove(user._id)}
-                          className="btn-primary text-sm flex items-center gap-1"
+                          className="btn-primary text-sm flex items-center gap-1 px-3 py-1.5"
                         >
                           <FaCheckCircle />
                           موافقة
@@ -273,7 +277,7 @@ const AdminDashboard = () => {
                             setSelectedUser(user);
                             setShowRejectModal(true);
                           }}
-                          className="btn-secondary text-sm flex items-center gap-1"
+                          className="btn-secondary text-sm flex items-center gap-1 px-3 py-1.5"
                         >
                           <FaTimesCircle />
                           رفض
@@ -285,14 +289,62 @@ const AdminDashboard = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile Cards */}
+          <div className="lg:hidden space-y-3">
+            {pendingUsers.map((user) => (
+              <div key={user._id} className="mobile-card">
+                <div className="mb-3 pb-3 border-b border-gray-200">
+                  <h3 className="font-bold text-gray-900 text-base mb-1">{user.name}</h3>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 font-medium">رقم الجوال:</span>
+                    <span className="text-gray-900 font-mono">{user.mobile}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 font-medium">البلد:</span>
+                    <span className="text-gray-900">{user.country}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 font-medium">السنة:</span>
+                    <span className="text-gray-900">{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('ar-EG') : '-'}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 font-medium">الكلية:</span>
+                    <span className="text-gray-900">{user.college || '-'}</span>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-4 pt-3 border-t border-gray-200">
+                  <button
+                    onClick={() => handleApprove(user._id)}
+                    className="flex-1 btn-primary text-sm flex items-center justify-center gap-1 py-2"
+                  >
+                    <FaCheckCircle />
+                    موافقة
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setShowRejectModal(true);
+                    }}
+                    className="flex-1 btn-secondary text-sm flex items-center justify-center gap-1 py-2"
+                  >
+                    <FaTimesCircle />
+                    رفض
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       {pendingUsers.length === 0 && (
-        <div className="card text-center py-12">
-          <FaCheckCircle className="text-6xl text-green-300 mx-auto mb-4" />
-          <p className="text-gray-600 text-xl font-semibold">لا توجد طلبات تسجيل معلقة</p>
-          <p className="text-gray-500 mt-2">جميع الطلبات تم مراجعتها</p>
+        <div className="card text-center py-8 md:py-12">
+          <FaCheckCircle className="text-4xl md:text-6xl text-green-300 mx-auto mb-3 md:mb-4" />
+          <p className="text-gray-600 text-base md:text-xl font-semibold">لا توجد طلبات تسجيل معلقة</p>
+          <p className="text-gray-500 mt-1 md:mt-2 text-sm md:text-base">جميع الطلبات تم مراجعتها</p>
         </div>
       )}
 

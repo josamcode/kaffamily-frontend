@@ -103,17 +103,17 @@ const AdminSettings = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold flex items-center gap-2 text-gray-800">
-          <FaCog className="text-gray-600" />
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 mb-6 md:mb-8">
+        <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2 text-gray-800">
+          <FaCog className="text-gray-600 text-base md:text-2xl" />
           إعدادات الموقع
         </h1>
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
+          className="w-full md:w-auto px-4 md:px-6 py-2 md:py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg text-sm md:text-base font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
         >
-          <FaSave />
+          <FaSave className="text-sm" />
           {saving ? 'جاري الحفظ...' : 'حفظ الإعدادات'}
         </button>
       </div>
@@ -136,7 +136,7 @@ const AdminSettings = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700 flex items-center gap-2">
+              <label className="flex items-center gap-2 text-sm font-medium mb-1 text-gray-700">
                 <FaImage />
                 صورة الشعار (URL)
               </label>
@@ -632,9 +632,9 @@ const AdminSettings = () => {
         </div>
 
         {/* Social Links */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
-            <FaLink className="text-gray-600" />
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+          <h2 className="text-lg md:text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
+            <FaLink className="text-gray-600 text-base md:text-lg" />
             روابط التواصل الاجتماعي
           </h2>
           <div className="space-y-4">
@@ -642,7 +642,7 @@ const AdminSettings = () => {
               <label className="block text-sm font-medium mb-1 text-gray-700">عنوان القسم</label>
               <input
                 type="text"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                className="w-full px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 value={settings.social?.title || ''}
                 onChange={(e) => updateSetting('social.title', e.target.value)}
                 placeholder="تابعنا على"
@@ -651,27 +651,27 @@ const AdminSettings = () => {
             <div>
               <label className="block text-sm font-medium mb-2 text-gray-700">الروابط</label>
               {(settings.social?.links || []).map((link, index) => (
-                <div key={index} className="space-y-2 mb-4 p-4 border border-gray-200 rounded-lg">
-                  <div className="flex gap-2 items-start">
+                <div key={index} className="space-y-2 mb-4 p-3 md:p-4 border border-gray-200 rounded-lg">
+                  <div className="flex flex-col md:flex-row gap-2 items-stretch md:items-start">
                     <button
                       type="button"
                       onClick={() => setShowSocialIconSelector(`social-${index}`)}
-                      className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center min-w-[48px]"
+                      className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center min-w-[48px] md:min-w-[48px] w-full md:w-auto"
                       title="اختر الأيقونة"
                     >
-                      {renderIcon(link.icon || 'FaGlobe', 'text-xl')}
+                      {renderIcon(link.icon || 'FaGlobe', 'text-lg md:text-xl')}
                     </button>
-                    <div className="flex-1 flex gap-2">
+                    <div className="flex-1 flex flex-col md:flex-row gap-2">
                       <input
                         type="text"
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                        className="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                         value={link.name || ''}
                         onChange={(e) => updateSocialLink(index, 'name', e.target.value)}
-                        placeholder="اسم المنصة (مثل: Facebook)"
+                        placeholder="اسم المنصة"
                       />
                       <input
                         type="text"
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                        className="flex-1 px-3 md:px-4 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                         value={link.url || ''}
                         onChange={(e) => updateSocialLink(index, 'url', e.target.value)}
                         placeholder="رابط المنصة"
@@ -680,7 +680,7 @@ const AdminSettings = () => {
                     <button
                       type="button"
                       onClick={() => removeSocialLink(index)}
-                      className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg"
+                      className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg w-full md:w-auto"
                     >
                       <FaTrash />
                     </button>
@@ -702,7 +702,7 @@ const AdminSettings = () => {
               <button
                 type="button"
                 onClick={addSocialLink}
-                className="mt-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg flex items-center gap-2"
+                className="mt-2 w-full md:w-auto px-4 py-2 text-sm md:text-base bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg flex items-center justify-center gap-2"
               >
                 <FaPlus />
                 إضافة رابط
