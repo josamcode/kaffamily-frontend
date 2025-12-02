@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
-import { FaHome, FaImages, FaGamepad, FaEnvelope, FaUserCircle, FaSignOutAlt, FaBars, FaTimes, FaCog, FaUser } from 'react-icons/fa';
+import { FaHome, FaImages, FaGamepad, FaEnvelope, FaUserCircle, FaSignOutAlt, FaBars, FaTimes, FaCog, FaUser, FaVideo, FaCommentDots, FaPlus, FaChevronUp, FaEllipsisH } from 'react-icons/fa';
 
 const Layout = ({ children }) => {
   const { user, logout, isAdmin } = useAuth();
@@ -11,7 +11,9 @@ const Layout = ({ children }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [settings, setSettings] = useState(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [floatingMenuOpen, setFloatingMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
+  const floatingMenuRef = useRef(null);
 
   const handleLogout = async () => {
     await logout();
@@ -99,6 +101,25 @@ const Layout = ({ children }) => {
     };
   }, [userMenuOpen]);
 
+  // Close floating menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (floatingMenuRef.current && !floatingMenuRef.current.contains(event.target)) {
+        setFloatingMenuOpen(false);
+      }
+    };
+
+    if (floatingMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [floatingMenuOpen]);
+
   const isActive = (path) => location.pathname === path;
 
   return (
@@ -168,6 +189,71 @@ const Layout = ({ children }) => {
                         <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></span>
                       )}
                     </Link>
+                  </div>
+
+                  {/* More Menu (Floating Actions) - Desktop */}
+                  <div className="relative" ref={floatingMenuRef}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setFloatingMenuOpen(!floatingMenuOpen);
+                      }}
+                      className={`relative px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 ${floatingMenuOpen
+                        ? 'text-white'
+                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+                        }`}
+                      style={floatingMenuOpen ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
+                      title="أخرى"
+                    >
+                      <FaEllipsisH className="text-xs" />
+                      <span>أخرى</span>
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {floatingMenuOpen && (
+                      <div
+                        className="absolute right-0 top-16 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50"
+                      >
+                        {/* Profile */}
+                        <Link
+                          to="/profile"
+                          onClick={() => setFloatingMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <div
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-xs"
+                            style={{ backgroundColor: settings?.colors?.primary || '#1F2937' }}
+                          >
+                            {user.name.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="text-sm">حسابي</span>
+                        </Link>
+
+                        {/* Videos */}
+                        <Link
+                          to="/videos"
+                          onClick={() => setFloatingMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-white">
+                            <FaVideo className="text-sm" />
+                          </div>
+                          <span className="text-sm">الفيديوهات</span>
+                        </Link>
+
+                        {/* Daily Message */}
+                        <Link
+                          to="/daily-message"
+                          onClick={() => setFloatingMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white">
+                            <FaCommentDots className="text-sm" />
+                          </div>
+                          <span className="text-sm">رسالة اليوم</span>
+                        </Link>
+                      </div>
+                    )}
                   </div>
 
                   {/* User Menu */}
@@ -369,27 +455,122 @@ const Layout = ({ children }) => {
                 <span className="text-xs font-medium">الإدارة</span>
               </Link>
             )}
-            <Link
-              to="/profile"
-              className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${isActive('/profile')
+            {/* More Menu Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setFloatingMenuOpen(!floatingMenuOpen);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 py-2 px-1 rounded-lg transition-colors ${floatingMenuOpen
                 ? 'text-white'
                 : 'text-gray-600'
                 }`}
-              style={isActive('/profile') ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
+              style={floatingMenuOpen ? { backgroundColor: settings?.colors?.primary || '#1F2937' } : {}}
             >
-              <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-white font-semibold text-xs mb-1 ${isActive('/profile') ? 'ring-2 ring-white' : ''}`}
-                style={{ backgroundColor: settings?.colors?.primary || '#1F2937' }}
-              >
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-              <span className="text-xs font-medium">حسابي</span>
-            </Link>
+              <FaEllipsisH className={`text-xl mb-1 ${floatingMenuOpen ? '' : 'text-gray-500'}`} />
+              <span className="text-xs font-medium">أخرى</span>
+            </button>
           </div>
         </nav>
       )}
 
       <main className="flex-1">{children}</main>
+
+      {/* Floating Action Menu - Mobile */}
+      <div className={`lg:hidden fixed inset-x-0 bottom-0 z-40 transition-all duration-300 ease-out pointer-events-none ${floatingMenuOpen ? 'pointer-events-auto' : ''}`}>
+        {/* Backdrop Blur - Full Screen */}
+        <div
+          className={`fixed inset-0 bg-black/50 backdrop-blur-md transition-opacity duration-300 ${floatingMenuOpen ? 'opacity-100' : 'opacity-0'
+            }`}
+          onClick={() => setFloatingMenuOpen(false)}
+          style={{
+            zIndex: 39,
+            marginBottom: '64px',
+            pointerEvents: floatingMenuOpen ? 'auto' : 'none'
+          }}
+        />
+
+        {/* Menu Container */}
+        <div
+          ref={floatingMenuRef}
+          className={`relative bg-white rounded-t-3xl shadow-2xl transition-transform duration-300 ease-out ${floatingMenuOpen ? 'translate-y-0' : 'translate-y-full'
+            }`}
+          style={{
+            maxHeight: '75vh',
+            boxShadow: '0 -10px 40px rgba(0, 0, 0, 0.2)',
+            zIndex: 40
+          }}
+        >
+          {/* Handle Bar */}
+          <div className="flex justify-center pt-3 pb-2">
+            <div
+              className="w-12 h-1.5 rounded-full cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                setFloatingMenuOpen(false);
+              }}
+              style={{ backgroundColor: settings?.colors?.primary || '#1F2937', opacity: 0.3 }}
+            />
+          </div>
+
+          {/* Menu Items */}
+          <div className="px-4 pb-20 pt-2 space-y-2 max-h-[60vh] overflow-y-auto">
+            {/* Profile */}
+            <Link
+              to="/profile"
+              onClick={() => setFloatingMenuOpen(false)}
+              className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-all duration-200 active:scale-95"
+              style={{ backgroundColor: isActive('/profile') ? `${settings?.colors?.primary || '#1F2937'}10` : '' }}
+            >
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-base flex-shrink-0"
+                style={{ backgroundColor: settings?.colors?.primary || '#1F2937' }}
+              >
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 text-right">
+                <div className="font-bold text-gray-900">حسابي</div>
+                <div className="text-sm text-gray-500">عرض وتعديل الملف الشخصي</div>
+              </div>
+              <FaChevronUp className="text-gray-400 transform rotate-90 flex-shrink-0" />
+            </Link>
+
+            {/* Videos */}
+            <Link
+              to="/videos"
+              onClick={() => setFloatingMenuOpen(false)}
+              className="flex items-center gap-4 p-4 rounded-2xl hover:bg-red-50 transition-all duration-200 active:scale-95"
+              style={{ backgroundColor: isActive('/videos') ? `${settings?.colors?.primary || '#1F2937'}10` : '' }}
+            >
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-white flex-shrink-0">
+                <FaVideo className="text-xl" />
+              </div>
+              <div className="flex-1 text-right">
+                <div className="font-bold text-gray-900">الفيديوهات</div>
+                <div className="text-sm text-gray-500">مشاهدة الفيديوهات</div>
+              </div>
+              <FaChevronUp className="text-gray-400 transform rotate-90 flex-shrink-0" />
+            </Link>
+
+            {/* Daily Message */}
+            <Link
+              to="/daily-message"
+              onClick={() => setFloatingMenuOpen(false)}
+              className="flex items-center gap-4 p-4 rounded-2xl hover:bg-green-50 transition-all duration-200 active:scale-95"
+              style={{ backgroundColor: isActive('/daily-message') ? `${settings?.colors?.primary || '#1F2937'}10` : '' }}
+            >
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white flex-shrink-0">
+                <FaCommentDots className="text-xl" />
+              </div>
+              <div className="flex-1 text-right">
+                <div className="font-bold text-gray-900">رسالة اليوم</div>
+                <div className="text-sm text-gray-500">اقرأ رسالة اليوم</div>
+              </div>
+              <FaChevronUp className="text-gray-400 transform rotate-90 flex-shrink-0" />
+            </Link>
+          </div>
+        </div>
+      </div>
 
       {/* Footer - Hidden on Mobile */}
       <footer className="bg-gray-800 text-white mt-auto hidden lg:block">

@@ -22,6 +22,7 @@ import AdminGames from './pages/Admin/Games';
 import AdminAnalytics from './pages/Admin/Analytics';
 import AdminQuickActions from './pages/Admin/QuickActions';
 import Profile from './pages/Profile';
+import UnderDevelopment from './pages/UnderDevelopment';
 import { ToastProvider } from './components/Toast';
 
 function App() {
@@ -88,6 +89,26 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <Profile />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/videos"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <UnderDevelopment pageName="صفحة الفيديوهات" />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/daily-message"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <UnderDevelopment pageName="صفحة رسالة اليوم" />
                   </Layout>
                 </ProtectedRoute>
               }

@@ -151,19 +151,18 @@ const Profile = () => {
             <h2 className="text-xl font-bold text-gray-900 mb-4">حالة الحساب</h2>
             <div className="flex items-center gap-3">
               <div
-                className={`px-4 py-2 rounded-lg font-medium ${
-                  displayUser.status === 'approved'
+                className={`px-4 py-2 rounded-lg font-medium ${displayUser.status === 'approved'
                     ? 'bg-green-100 text-green-700'
                     : displayUser.status === 'rejected'
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-yellow-100 text-yellow-700'
-                }`}
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-yellow-100 text-yellow-700'
+                  }`}
               >
                 {displayUser.status === 'approved'
                   ? 'مقبول'
                   : displayUser.status === 'rejected'
-                  ? 'مرفوض'
-                  : 'قيد الانتظار'}
+                    ? 'مرفوض'
+                    : 'قيد الانتظار'}
               </div>
               {displayUser.status === 'rejected' && displayUser.rejectionReason && (
                 <p className="text-sm text-gray-600">
