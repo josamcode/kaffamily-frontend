@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
-import JSZip from 'jszip';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/Toast';
@@ -12,6 +11,7 @@ import {
   FaChevronLeft, FaChevronRight, FaCalendarAlt, FaSortAmountDown,
   FaPlus, FaCheckSquare, FaSquare
 } from 'react-icons/fa';
+import JSZip from 'jszip';
 
 const Collections = () => {
   const [collections, setCollections] = useState([]);
@@ -382,64 +382,31 @@ const Collections = () => {
     if (!selectedCollection || !selectedCollection._id) return;
 
     try {
-      showToast('جاري تحضير المجموعة للتحميل...', 'info');
+      const images = filteredImages.length > 0 ? filteredImages : allImages.filter(img => img.collectionId === selectedCollection._id);
+
+      if (images.length === 0) {
+        showToast('لا توجد صور للتحميل', 'error');
+        return;
+      }
+
       const token = localStorage.getItem('token');
+      const folderName = selectedCollection.name.replace(/[^a-z0-9]/gi, '_');
 
-      // Use the backend download endpoint
-      const response = await api.get(`/collections/${selectedCollection._id}/download`);
-
-      if (response.data.downloadUrl) {
-        // Download the ZIP file using axios with authentication
+      // Check if File System Access API is supported
+      if ('showDirectoryPicker' in window) {
+        // Modern browsers: Use File System Access API to create a real folder
         try {
-          const downloadResponse = await axios.get(`${apiServerUrl}${response.data.downloadUrl}`, {
-            responseType: 'blob',
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
+          showToast('اختر مجلد لحفظ الصور...', 'info');
+          const directoryHandle = await window.showDirectoryPicker();
+          const folderHandle = await directoryHandle.getDirectoryHandle(folderName, { create: true });
 
-          // Create a blob URL and trigger download
-          const blob = new Blob([downloadResponse.data], { type: 'application/zip' });
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `${selectedCollection.name.replace(/[^a-z0-9]/gi, '_')}_images.zip`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
+          let downloadedCount = 0;
+          let failedCount = 0;
 
-          // Delete the ZIP file from server after successful download
-          if (response.data.deleteUrl) {
-            try {
-              // Wait a bit to ensure download completes
-              setTimeout(async () => {
-                try {
-                  await axios.delete(`${apiServerUrl}${response.data.deleteUrl}`, {
-                    headers: {
-                      'Authorization': `Bearer ${token}`
-                    }
-                  });
-                  console.log('ZIP file deleted from server');
-                } catch (deleteError) {
-                  console.error('Error deleting ZIP file:', deleteError);
-                  // Don't show error to user, file will be cleaned up later
-                }
-              }, 3000); // Wait 3 seconds before deletion
-            } catch (deleteError) {
-              console.error('Error scheduling ZIP deletion:', deleteError);
-            }
-          }
+          showToast(`جاري تحميل ${images.length} صورة...`, 'info');
 
-          showToast('تم تحميل الصور بنجاح', 'success');
-        } catch (downloadError) {
-          console.error('Error downloading ZIP file:', downloadError);
-          // Fallback: download all images manually
-          showToast('جاري تحميل الصور يدوياً...', 'info');
-          const zip = new JSZip();
-          const images = filteredImages.length > 0 ? filteredImages : allImages.filter(img => img.collectionId === selectedCollection._id);
-
-          for (const image of images) {
+          for (let i = 0; i < images.length; i++) {
+            const image = images[i];
             try {
               const fullUrl = `${apiServerUrl}/${image.path}`;
               const imgResponse = await axios.get(fullUrl, {
@@ -448,29 +415,52 @@ const Collections = () => {
                   'Authorization': `Bearer ${token}`
                 }
               });
-              zip.file(image.originalName || `image_${image._id}.jpg`, imgResponse.data);
+
+              // Get file name
+              const originalName = image.originalName || `image_${i + 1}.jpg`;
+              const fileName = originalName.includes('.')
+                ? originalName
+                : `${originalName}.jpg`;
+
+              // Create file in folder
+              const fileHandle = await folderHandle.getFileHandle(fileName, { create: true });
+              const writable = await fileHandle.createWritable();
+              await writable.write(imgResponse.data);
+              await writable.close();
+
+              downloadedCount++;
             } catch (error) {
-              console.error(`Error downloading image ${image._id}:`, error);
+              failedCount++;
             }
           }
 
-          const blob = await zip.generateAsync({ type: 'blob' });
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `${selectedCollection.name.replace(/[^a-z0-9]/gi, '_')}_images.zip`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-          showToast(`تم تحميل ${images.length} صورة بنجاح`, 'success');
+          // Update download count on backend
+          try {
+            await api.post(`/collections/${selectedCollection._id}/download-count`);
+          } catch (error) {
+            // Silent fail
+          }
+
+          if (downloadedCount > 0) {
+            showToast(`تم حفظ ${downloadedCount} صورة في المجلد${failedCount > 0 ? ` (فشل ${failedCount})` : ''}`, 'success');
+          } else {
+            showToast('فشل تحميل الصور', 'error');
+          }
+        } catch (error) {
+          if (error.name === 'AbortError') {
+            showToast('تم إلغاء العملية', 'info');
+            return;
+          }
+          throw error;
         }
       } else {
-        // Fallback: download all images manually
-        const zip = new JSZip();
-        const images = filteredImages.length > 0 ? filteredImages : allImages.filter(img => img.collectionId === selectedCollection._id);
+        // Fallback for older browsers: Download images with folder name prefix
+        showToast(`جاري تحميل ${images.length} صورة...`, 'info');
+        let downloadedCount = 0;
+        let failedCount = 0;
 
-        for (const image of images) {
+        for (let i = 0; i < images.length; i++) {
+          const image = images[i];
           try {
             const fullUrl = `${apiServerUrl}/${image.path}`;
             const imgResponse = await axios.get(fullUrl, {
@@ -479,25 +469,50 @@ const Collections = () => {
                 'Authorization': `Bearer ${token}`
               }
             });
-            zip.file(image.originalName || `image_${image._id}.jpg`, imgResponse.data);
+
+            // Create blob and trigger download with folder name prefix
+            const blob = new Blob([imgResponse.data]);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+
+            // Prefix filename with folder name so user can organize them
+            const originalName = image.originalName || `image_${i + 1}.jpg`;
+            const fileName = originalName.includes('.')
+              ? originalName
+              : `${originalName}.jpg`;
+            link.download = `${folderName}_${fileName}`;
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            downloadedCount++;
+
+            // Small delay between downloads to prevent browser blocking
+            if (i < images.length - 1) {
+              await new Promise(resolve => setTimeout(resolve, 200));
+            }
           } catch (error) {
-            console.error(`Error downloading image ${image._id}:`, error);
+            failedCount++;
           }
         }
 
-        const blob = await zip.generateAsync({ type: 'blob' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${selectedCollection.name.replace(/[^a-z0-9]/gi, '_')}_images.zip`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        showToast(`تم تحميل ${images.length} صورة بنجاح`, 'success');
+        // Update download count on backend
+        try {
+          await api.post(`/collections/${selectedCollection._id}/download-count`);
+        } catch (error) {
+          // Silent fail
+        }
+
+        if (downloadedCount > 0) {
+          showToast(`تم تحميل ${downloadedCount} صورة${failedCount > 0 ? ` (فشل ${failedCount})` : ''}. يمكنك تنظيمها في مجلد يدوياً`, 'success');
+        } else {
+          showToast('فشل تحميل الصور', 'error');
+        }
       }
     } catch (error) {
-      console.error('Error downloading collection:', error);
       showToast('خطأ في تحميل الصور: ' + (error.response?.data?.message || error.message), 'error');
     }
   };
@@ -651,7 +666,7 @@ const Collections = () => {
           <div className="bg-white border border-gray-200 rounded-lg p-4 md:p-6 shadow-sm">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
               <div>
-                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2 flex items-center gap-2">
+                <label className="flex items-center gap-2 text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">
                   <FaSortAmountDown className="text-xs" />
                   الترتيب حسب
                 </label>
@@ -677,7 +692,7 @@ const Collections = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2 flex items-center gap-2">
+                <label className="flex items-center gap-2 text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">
                   <FaCalendarAlt className="text-xs" />
                   الفترة الزمنية
                 </label>
@@ -840,7 +855,7 @@ const Collections = () => {
                 >
                   <FaDownload className="text-xs md:text-base" />
                   <span className="hidden sm:inline">تحميل الصور</span>
-                  <span className="sm:hidden">تحميل</span>
+                  <span className="sm:hidden">تحميل الكل</span>
                 </button>
               </div>
             </div>
